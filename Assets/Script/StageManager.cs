@@ -9,11 +9,9 @@ public class StageManager : MonoBehaviour
 {
     public TextMeshProUGUI roundText;
     public GameManager gameManager;
+    public UIManager uiManager;
     public Image background;
     private int roundNum;
-    [Header("Dissolve Animation")]
-    public float dissolveSpeed = 2f;
-    public AnimationCurve dissolveCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     [Header("Level Progress")]
     private bool dotClicked = false;
@@ -61,14 +59,12 @@ public class StageManager : MonoBehaviour
             hasCompleted = true;
             Debug.Log($"Round {roundNum} Completed");
             StartCoroutine(CompleteRoundSequence());
-
-
         }
     }
 
     IEnumerator CompleteRoundSequence()
     {
-        yield return StartCoroutine(FadeOutText());
+        yield return StartCoroutine(uiManager.FadeOutText(roundText));
         yield return new WaitForSeconds(1f);
         gameManager.NextRound();
         ResetProgress();
@@ -83,60 +79,7 @@ public class StageManager : MonoBehaviour
         hasCompleted = false;
     }
 
-    IEnumerator FadeOutText()
-    {
-        Color originalColor = roundText.color;
-        // Color afterColor = afterText.color;
 
-        float dissolveTime = 0f;
-        while (dissolveTime < 1f)
-        {
-            dissolveTime += Time.deltaTime * dissolveSpeed;
-            float curveValue = dissolveCurve.Evaluate(dissolveTime);
-
-            Color color = originalColor;
-            // Color aColor = afterColor;
-            color.a = originalColor.a * (1f - curveValue);
-            // aColor.a = 1f - curveValue;
-            roundText.color = color;
-            // afterText.color = aColor;
-
-            yield return null;
-        }
-        Color transparentColor = originalColor;
-        transparentColor.a = 0f;
-        roundText.color = transparentColor;
-    }
-    IEnumerator FadeInText()
-    {
-        Color originalColor = roundText.color;
-        originalColor.a = 1f;
-        // afterText.text = newText;
-
-        float dissolveTime = 0f;
-        while (dissolveTime < 1f)
-        {
-            dissolveTime += Time.deltaTime * dissolveSpeed;
-            float curveValue = dissolveCurve.Evaluate(dissolveTime);
-
-            Color color = originalColor;
-            // Color aColor = afterColor;
-            color.a = originalColor.a * curveValue;
-            // aColor.a = curveValue;
-            roundText.color = color;
-            // afterText.color = aColor;
-
-            yield return null;
-        }
-
-        roundText.color = originalColor;
-    }
-    IEnumerator DissolveEffect(string newText)
-    {
-        yield return StartCoroutine(FadeOutText());
-        roundText.text = newText;
-        yield return StartCoroutine(FadeInText());
-    }
     private void UpdateRoundText()
     {
         roundNum = gameManager.currentRound;
@@ -145,28 +88,30 @@ public class StageManager : MonoBehaviour
         if (roundNum <= toDoText.Length && roundNum > 0)
         {
             if (roundNum == 1)
-                {
-                    StartCoroutine(DissolveEffect(toDoText[roundNum - 1]));
-                }
-                else
-                {
-                    roundText.text = toDoText[roundNum - 1];
-                    StartCoroutine(FadeInText());
-                }
+            {
+                StartCoroutine(uiManager.DissolveEffect(roundText, toDoText[roundNum - 1]));
+            }
+            else
+            {
+                roundText.text = toDoText[roundNum - 1];
+                StartCoroutine(uiManager.FadeInText(roundText));
+            }
         }
     }
 
-    public void OnDotClicked()
+    internal int GetCurrentRound()
     {
-        dotClicked = true;
-        Debug.Log("Dot Clicked!");
-        StartCoroutine(WaitSecCoroutine());
+        return roundNum;
     }
 
-    private IEnumerator WaitSecCoroutine()
+    internal void SetDotClicked(bool v)
     {
-        yield return new WaitForSeconds(1f);
-        background.color = Color.white;
+        dotClicked = v;
+        Debug.Log("SetDotClicked");
     }
 
+    internal void SetDotMoved(bool v)
+    {
+        dotMoved = v;
+    }
 }
