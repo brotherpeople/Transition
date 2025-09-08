@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Circle_Press
+  m_Name: Circle_Transition
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -28,15 +28,6 @@ AnimationClip:
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
-      - serializedVersion: 3
-        time: 0.53333336
-        value: {x: 16.947855, y: 17.745668, z: 1}
-        inSlope: {x: 43.306667, y: 9.174726, z: 0}
-        outSlope: {x: 43.306667, y: 9.174726, z: 0}
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: {x: 0.33333334, y: 0.76168704, z: 0.33333334}
-        outWeight: {x: 0.33333334, y: 0.47132337, z: 0.33333334}
       - serializedVersion: 3
         time: 1
         value: {x: 30, y: 30, z: 1}
@@ -133,15 +124,6 @@ AnimationClip:
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.53333336
-        value: 17.745668
-        inSlope: 9.174726
-        outSlope: 9.174726
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.76168704
-        outWeight: 0.47132337
       - serializedVersion: 3
         time: 1
         value: 30
