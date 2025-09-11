@@ -21,6 +21,7 @@ public class LevelManager : MonoBehaviour
     public GameObject dotPrefab;
     public GameObject collectThis;
     public GameObject level4Container;
+    public GameObject squareTransition;
 
 
     void Start()
@@ -30,6 +31,7 @@ public class LevelManager : MonoBehaviour
         swipeThis.SetActive(false);
         swipeHere.SetActive(false);
         collectThis.SetActive(false);
+        squareTransition.SetActive(false);
 
     }
 
@@ -98,7 +100,7 @@ public class LevelManager : MonoBehaviour
 
     }
 
-    // level 3: Dot Swiped -> level 4: Dot Clicked
+    // level 3: Dot Swiped -> level 4: Dot Collect
     public void onSwipe()
     {
         stageManager.SetSwiped(true);
@@ -115,7 +117,7 @@ public class LevelManager : MonoBehaviour
         Image swipeThisPos = swipeThis.GetComponent<Image>();
         swipeThisPos.raycastTarget = false;
 
-        // level 4: Dot Clicked setting
+        // level 4: Dot Collect setting
         Destroy(dragThis);
 
         for (int i = 0; i < 20; i++)
@@ -151,5 +153,21 @@ public class LevelManager : MonoBehaviour
     private void OnCollectComplete()
     {
         stageManager.SetCollected(true);
+
+        squareTransition.SetActive(true);
+        Animator animator = squareTransition.GetComponent<Animator>();
+        animator.SetTrigger("isCollected");
+        StartCoroutine(OnCollectedSeq());
+
+        Debug.Log("Level 4: Collect Clear!");
+    }
+
+    // level 4: Dot Collect -> level 5: 
+    IEnumerator OnCollectedSeq()
+    {
+        yield return new WaitForSeconds(1.5f);
+
+        Destroy(swipeThis);
+
     }
 }

@@ -58,7 +58,6 @@ public class SimpleDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
                 break;
             case DragType.Collect:
                 rectTransform.anchoredPosition += delta;
-                CheckForCollection();
                 break;
         }
     }
@@ -81,27 +80,18 @@ public class SimpleDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
                 break;
             case DragType.Collect:
                 success = (collectedCount >= 20);
+                // rectTransform.anchoredPosition = originalPos;
                 break;
         }
         OnResult?.Invoke(success);
     }
 
-    private void CheckForCollection()
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        GameObject[] dots = GameObject.FindGameObjectsWithTag("DotPrefab");
-
-        foreach (GameObject dot in dots)
+        if (dragType == DragType.Collect && other.CompareTag("DotPrefab"))
         {
-            Vector2 dotPos = dot.GetComponent<RectTransform>().anchoredPosition;
-            Vector2 collectThisPos = collectThis.GetComponent<RectTransform>().anchoredPosition;
-            float dist = Vector2.Distance(collectThisPos, dotPos);
-
-            if (dist < 10f)
-            {
-                dot.SetActive(false);
-                collectedCount++;
-            }
-
+            other.gameObject.SetActive(false);
+            collectedCount++;
         }
     }
 
@@ -116,7 +106,7 @@ public class SimpleDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
         if (dist < threshold)
         {
             rectTransform.anchoredPosition = targetPos;
-            levelManager.OnDotMoved();
+            // levelManager.OnDotMoved();
             return true;
         }
         else
@@ -169,10 +159,6 @@ public class SimpleDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
         Debug.Log($"Animation finished: Current position: {targetPos}");
 
         OnResult?.Invoke(success);
-    }
-
-    private void HandleCollect()
-    {
     }
 
 }
