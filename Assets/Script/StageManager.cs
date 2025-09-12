@@ -19,6 +19,7 @@ public class StageManager : MonoBehaviour
     private bool screenSwiped = false;
     private bool hasCompleted = false;
     private bool dotCollected = false;
+    private bool dotPressed = false;
     [SerializeField]
     private string[] toDoText = {
         "1. Click The Dot",
@@ -57,6 +58,9 @@ public class StageManager : MonoBehaviour
             case 4:
                 levelComplete = dotCollected;
                 break;
+            case 5:
+                levelComplete = dotPressed;
+                break;
         }
 
         if (levelComplete)
@@ -83,6 +87,7 @@ public class StageManager : MonoBehaviour
         screenSwiped = false;
         dotCollected = false;
         hasCompleted = false;
+        dotPressed = false;
     }
 
 
@@ -127,7 +132,11 @@ public class StageManager : MonoBehaviour
     }
     internal void SetCollected(bool v)
     {
-        screenSwiped = v;
+        dotCollected = v;
+    }
+    internal void SetLongPressed(bool v)
+    {
+        dotPressed = v;
     }
 
 }

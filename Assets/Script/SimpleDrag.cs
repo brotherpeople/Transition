@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
 
 public class SimpleDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
@@ -57,9 +58,18 @@ public class SimpleDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
                 rectTransform.anchoredPosition += delta;
                 break;
             case DragType.Collect:
-                rectTransform.anchoredPosition += delta;
+                Vector2 newPos = rectTransform.anchoredPosition + delta;
+                newPos = ClampBoundary(newPos);
+                rectTransform.anchoredPosition = newPos;
                 break;
         }
+    }
+
+    private Vector2 ClampBoundary(Vector2 pos)
+    {
+        float clampedX = Mathf.Clamp(pos.x, -430, 530);
+        float clampedY = Mathf.Clamp(pos.y, -1000, 700);
+        return new Vector2(clampedX, clampedY);
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -79,6 +89,7 @@ public class SimpleDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
                 HandleSwipe();
                 break;
             case DragType.Collect:
+                rectTransform.anchoredPosition = ClampBoundary(rectTransform.anchoredPosition);
                 success = (collectedCount >= 20);
                 // rectTransform.anchoredPosition = originalPos;
                 break;

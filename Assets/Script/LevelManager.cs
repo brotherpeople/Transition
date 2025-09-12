@@ -7,6 +7,7 @@ public class LevelManager : MonoBehaviour
 {
     public StageManager stageManager;
     public UIManager uiManager;
+    public SimplePress simplePress;
 
     [Header("Level 1")]
     public GameObject clickHere;
@@ -22,6 +23,9 @@ public class LevelManager : MonoBehaviour
     public GameObject collectThis;
     public GameObject level4Container;
     public GameObject squareTransition;
+    [Header("Level 5")]
+    public GameObject pressThis;
+    public float pressDuration = 5f;
 
 
     void Start()
@@ -32,7 +36,7 @@ public class LevelManager : MonoBehaviour
         swipeHere.SetActive(false);
         collectThis.SetActive(false);
         squareTransition.SetActive(false);
-
+        pressThis.SetActive(false);
     }
 
     // level 1: Dot Clicked -> level 2: Dot Moved
@@ -162,12 +166,38 @@ public class LevelManager : MonoBehaviour
         Debug.Log("Level 4: Collect Clear!");
     }
 
-    // level 4: Dot Collect -> level 5: 
+    // level 4: Dot Collect -> level 5: Dot Pressed
     IEnumerator OnCollectedSeq()
     {
         yield return new WaitForSeconds(1.5f);
 
         Destroy(swipeThis);
 
+        yield return StartCoroutine(uiManager.FadeInImage(pressThis, 1f));
+        SimplePress longPress = pressThis.GetComponent<SimplePress>();
+        if (longPress != null)
+        {
+            longPress.OnPressComplete.AddListener(() =>
+            {
+                OnPressComplete();
+            });
+        }
+    }
+
+    // level 4: Dot Collect -> level 5: Dot Long Press
+    private void OnPressComplete()
+    {
+        stageManager.SetLongPressed(true);
+
+        Animator animator = pressThis.GetComponent<Animator>();
+        animator.SetTrigger("isLongPressed");
+        StartCoroutine(OnLongPressedSeq());
+
+        Debug.Log("Level 5: Long Press Clear!");
+    }
+
+    IEnumerator OnLongPressedSeq()
+    {
+        yield return new WaitForSeconds(1.5f);
     }
 }
