@@ -17,6 +17,7 @@ public class SimplePress : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private RectTransform rectTransform;
     private Vector2 originalPos;
     private Vector2 originalScale;
+    private UIManager uIManager;
 
     private void Start()
     {
@@ -82,6 +83,8 @@ public class SimplePress : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (isPressed && pressTime >= pressDuration)
         {
             isPressed = false;
+            yield return new WaitForSeconds(1f);
+            Destroy(progressText);
             StopCoroutine(ShakeEffect());
             OnPressComplete?.Invoke();
             Debug.Log("Long Press completed!");

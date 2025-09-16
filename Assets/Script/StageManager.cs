@@ -14,12 +14,13 @@ public class StageManager : MonoBehaviour
     private int roundNum;
 
     [Header("Level Progress")]
-    private bool dotClicked = false;
-    private bool dotMoved = false;
-    private bool screenSwiped = false;
-    private bool hasCompleted = false;
-    private bool dotCollected = false;
-    private bool dotPressed = false;
+    private bool dotClicked = false; // level 1
+    private bool dotMoved = false; // level 2
+    private bool screenSwiped = false; // level 3
+    private bool hasCompleted = false; // level 3
+    private bool dotCollected = false; // level 4
+    private bool dotPressed = false; // level 5
+    private bool dotDoubleTapped = false; // level 6
     [SerializeField]
     private string[] toDoText = {
         "1. Click The Dot",
@@ -61,6 +62,9 @@ public class StageManager : MonoBehaviour
             case 5:
                 levelComplete = dotPressed;
                 break;
+            case 6:
+                levelComplete = dotDoubleTapped;
+                break;
         }
 
         if (levelComplete)
@@ -88,6 +92,7 @@ public class StageManager : MonoBehaviour
         dotCollected = false;
         hasCompleted = false;
         dotPressed = false;
+        dotDoubleTapped = false;
     }
 
 
@@ -137,6 +142,11 @@ public class StageManager : MonoBehaviour
     internal void SetLongPressed(bool v)
     {
         dotPressed = v;
+    }
+
+    internal void SetDoubleTapped(bool v)
+    {
+        dotDoubleTapped = v;
     }
 
 }

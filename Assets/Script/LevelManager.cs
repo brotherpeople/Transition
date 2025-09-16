@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -26,7 +27,8 @@ public class LevelManager : MonoBehaviour
     [Header("Level 5")]
     public GameObject pressThis;
     public float pressDuration = 5f;
-
+    [Header("Level 6")]
+    public GameObject doubleTapThis;
 
     void Start()
     {
@@ -37,6 +39,7 @@ public class LevelManager : MonoBehaviour
         collectThis.SetActive(false);
         squareTransition.SetActive(false);
         pressThis.SetActive(false);
+        doubleTapThis.SetActive(false);
     }
 
     // level 1: Dot Clicked -> level 2: Dot Moved
@@ -171,8 +174,10 @@ public class LevelManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
 
+        // destroy unnecessary objects
         Destroy(swipeThis);
 
+        // level 5: Dot Pressed setting
         yield return StartCoroutine(uiManager.FadeInImage(pressThis, 1f));
         SimplePress longPress = pressThis.GetComponent<SimplePress>();
         if (longPress != null)
@@ -184,7 +189,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    // level 4: Dot Collect -> level 5: Dot Long Press
+    // level 5: Dot Pressed -> level 6: Dot Double Tap
     private void OnPressComplete()
     {
         stageManager.SetLongPressed(true);
@@ -197,6 +202,32 @@ public class LevelManager : MonoBehaviour
     }
 
     IEnumerator OnLongPressedSeq()
+    {
+        yield return new WaitForSeconds(1.5f);
+
+        yield return StartCoroutine(uiManager.FadeInImage(doubleTapThis, 1f));
+        SimpleDoubleTap doubleTap = doubleTapThis.GetComponent<SimpleDoubleTap>();
+        if (doubleTap != null)
+        {
+            doubleTap.OnDoubleTapComplete.AddListener(() =>
+            {
+                OnDoubleTapComplete();
+            });
+        }
+
+    }
+
+    // level 6: Dot Double Tap -> level 7:
+    private void OnDoubleTapComplete()
+    {
+        stageManager.SetDoubleTapped(true);
+
+        Animator animator = pressThis.GetComponent<Animator>();
+        animator.SetTrigger("isDoubleTapped");
+        StartCoroutine(OnDoubleTappedSeq());
+    }
+
+    IEnumerator OnDoubleTappedSeq()
     {
         yield return new WaitForSeconds(1.5f);
     }
