@@ -29,17 +29,35 @@ public class LevelManager : MonoBehaviour
     public float pressDuration = 5f;
     [Header("Level 6")]
     public GameObject doubleTapThis;
+    [Header("Level 7")]
+    public GameObject zoomButton1;
+    public GameObject zoomButton2;
+    public TextMeshProUGUI zoomText;
 
     void Start()
     {
+        // level 2
         dragHere.SetActive(false);
         dragThis.SetActive(false);
+
+        // level 3
         swipeThis.SetActive(false);
         swipeHere.SetActive(false);
+
+        // level 4
         collectThis.SetActive(false);
         squareTransition.SetActive(false);
+
+        // level 5
         pressThis.SetActive(false);
+
+        // level 6
         doubleTapThis.SetActive(false);
+
+        // level 7
+        zoomButton1.SetActive(false);
+        zoomButton2.SetActive(false);
+        zoomText.gameObject.SetActive(false);
     }
 
     // level 1: Dot Clicked -> level 2: Dot Moved
@@ -174,7 +192,7 @@ public class LevelManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
 
-        // destroy unnecessary objects
+        // destroy level 3 objects
         Destroy(swipeThis);
 
         // level 5: Dot Pressed setting
@@ -205,6 +223,11 @@ public class LevelManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
 
+        // destroy level 4 objects
+        Destroy(collectThis);
+        Destroy(squareTransition);
+
+        // level 6: Dot Double Tap setting
         yield return StartCoroutine(uiManager.FadeInImage(doubleTapThis, 1f));
         SimpleDoubleTap doubleTap = doubleTapThis.GetComponent<SimpleDoubleTap>();
         if (doubleTap != null)
@@ -217,7 +240,7 @@ public class LevelManager : MonoBehaviour
 
     }
 
-    // level 6: Dot Double Tap -> level 7:
+    // level 6: Dot Double Tap -> level 7: Zoom Text
     private void OnDoubleTapComplete()
     {
         stageManager.SetDoubleTapped(true);
@@ -228,6 +251,44 @@ public class LevelManager : MonoBehaviour
     }
 
     IEnumerator OnDoubleTappedSeq()
+    {
+        yield return new WaitForSeconds(1.5f);
+
+        Destroy(pressThis);
+        yield return StartCoroutine(uiManager.FadeOutImage(doubleTapThis, 1f));
+
+        yield return StartCoroutine(uiManager.FadeInText(zoomText));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(uiManager.FadeInImage(zoomButton1, 1f));
+        yield return StartCoroutine(uiManager.FadeInImage(zoomButton2, 1f));
+
+        SimpleDrag zoomThis = zoomButton1.GetComponent<SimpleDrag>();
+        if (zoomThis != null)
+        {
+            zoomThis.OnResult.AddListener((success) =>
+            {
+                if (success)
+                {
+                    OnZoomComplete();
+                }
+            });
+        }
+    }
+
+    // level 7: Zoom Text -> level 8
+    private void OnZoomComplete()
+    {
+        stageManager.SetTextZoomed(true);
+
+        squareTransition.SetActive(true);
+        Animator animator = squareTransition.GetComponent<Animator>();
+        animator.SetTrigger("isZoomCompleted");
+        StartCoroutine(OnZoomCompleteSeq());
+
+        Debug.Log("Level 7: Zoom Complete!");
+    }
+
+    IEnumerator OnZoomCompleteSeq()
     {
         yield return new WaitForSeconds(1.5f);
     }

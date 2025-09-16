@@ -13,6 +13,7 @@ public class SimpleDoubleTap : MonoBehaviour, IPointerClickHandler
     private int tapCount = 0;
     private bool isAnimating = false;
     private float lastTapTime;
+    private UIManager uIManager;
 
 
     void Start()
@@ -34,18 +35,18 @@ public class SimpleDoubleTap : MonoBehaviour, IPointerClickHandler
             indicatorText.text = "Tap faster!";
         }
         // second tap
-        else if (tapCount == 1 || actualTapTime <= doubleTapTimeLimit)
+        else if (tapCount == 1 && actualTapTime <= doubleTapTimeLimit)
         {
             tapCount = 0;
             OnDoubleTapComplete?.Invoke();
             indicatorText.text = "You made it!";
+            StartCoroutine(FadeOutIndicatorText(indicatorText));
             Debug.Log("Double Tap Completed!");
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    IEnumerator FadeOutIndicatorText(TextMeshProUGUI text)
     {
-
+        yield return StartCoroutine(uIManager.FadeOutText(text));
     }
 }

@@ -1,15 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 public class SimpleDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
     [Serializable]
-    public enum DragType { DragToTarget, Swipe, Collect };
+    public enum DragType { DragToTarget, Swipe, Collect, Zoom };
     public float threshold = 100f;
     public DragType dragType;
     private RectTransform rectTransform;
@@ -21,6 +24,10 @@ public class SimpleDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
     public GameObject collectThis;
     private int collectedCount;
     public LevelManager levelManager;
+    public TextMeshProUGUI zoomText;
+    private Vector2 currentPos;
+    public SimpleDrag otherButton;
+    public float targetScale = 20f;
     [Header("Events")]
     public UnityEvent<bool> OnResult;
     private bool isAnimating = false;
@@ -32,6 +39,7 @@ public class SimpleDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
         rectTransform = GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
         originalPos = rectTransform.anchoredPosition;
+        currentPos = originalPos;
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -61,6 +69,10 @@ public class SimpleDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
                 Vector2 newPos = rectTransform.anchoredPosition + delta;
                 newPos = ClampBoundary(newPos);
                 rectTransform.anchoredPosition = newPos;
+                break;
+            case DragType.Zoom:
+                rectTransform.anchoredPosition += delta;
+                UpdateZoom();
                 break;
         }
     }
@@ -92,6 +104,9 @@ public class SimpleDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
                 rectTransform.anchoredPosition = ClampBoundary(rectTransform.anchoredPosition);
                 success = (collectedCount >= 20);
                 // rectTransform.anchoredPosition = originalPos;
+                break;
+            case DragType.Zoom:
+                success = CheckZoomComplete();
                 break;
         }
         OnResult?.Invoke(success);
@@ -170,6 +185,28 @@ public class SimpleDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
         Debug.Log($"Animation finished: Current position: {targetPos}");
 
         OnResult?.Invoke(success);
+    }
+
+    private bool CheckZoomComplete()
+    {
+        float currentScale = zoomText.transform.localScale.x;
+        if (currentScale >= targetScale)
+        {
+            return true;
+        }
+        else return false;
+    }
+
+    private void UpdateZoom()
+    {
+        float dist = Vector2.Distance(currentPos, otherButton.currentPos);
+        float initialDist = Vector2.Distance(originalPos, otherButton.originalPos);
+
+        float distRatio = dist / initialDist;
+        float newFontSize = Mathf.Clamp(8f * distRatio, 8f, 50f);
+
+        zoomText.fontSize = newFontSize;
+
     }
 
 }
