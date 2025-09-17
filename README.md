@@ -3,6 +3,9 @@
 ## Overview
 A Unity-based educational game designed to teach elderly users essential smartphone gestures through interactive step-by-step tutorials. Each level introduces a fundamental touch interaction, making smartphone technology more accessible and less intimidating for seniors.
 
+## How to install
+You can easily download *FirstTouch.apk* and install it. Don't worry I didn't put any virus in it. 
+
 ## Game Levels
 The game progresses through seven core smartphone gestures:
 - **Level 1: Click** - Basic tap interaction
