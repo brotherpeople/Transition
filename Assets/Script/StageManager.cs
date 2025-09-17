@@ -12,6 +12,7 @@ public class StageManager : MonoBehaviour
     public UIManager uiManager;
     public Image background;
     private int roundNum;
+    private int finalRoundNum = 6;
 
     [Header("Level Progress")]
     private bool dotClicked = false; // level 1
@@ -66,9 +67,9 @@ public class StageManager : MonoBehaviour
             case 6:
                 levelComplete = dotDoubleTapped;
                 break;
-            case 7:
-                levelComplete = textZoomed;
-                break;
+            // case 7:
+            //     levelComplete = textZoomed;
+            //     break;
         }
 
         if (levelComplete)
@@ -83,9 +84,12 @@ public class StageManager : MonoBehaviour
     {
         yield return StartCoroutine(uiManager.FadeOutText(roundText));
         yield return new WaitForSeconds(1f);
+        if (roundNum < finalRoundNum)
+        {
         gameManager.NextRound();
         ResetProgress();
         UpdateRoundText();
+        }
     }
 
     void ResetProgress()

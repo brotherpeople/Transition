@@ -9,11 +9,11 @@ public class SimpleDoubleTap : MonoBehaviour, IPointerClickHandler
 {
     public float doubleTapTimeLimit = 0.1f;
     public TextMeshProUGUI indicatorText;
+    public UIManager uIManager;
     public UnityEvent OnDoubleTapComplete;
     private int tapCount = 0;
     private bool isAnimating = false;
     private float lastTapTime;
-    private UIManager uIManager;
 
 
     void Start()

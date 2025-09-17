@@ -9,6 +9,7 @@ public class LevelManager : MonoBehaviour
     public StageManager stageManager;
     public UIManager uiManager;
     public SimplePress simplePress;
+    public GameCompletePanel gameCompletePanel;
 
     [Header("Level 1")]
     public GameObject clickHere;
@@ -255,24 +256,37 @@ public class LevelManager : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
 
         Destroy(pressThis);
-        yield return StartCoroutine(uiManager.FadeOutImage(doubleTapThis, 1f));
 
-        yield return StartCoroutine(uiManager.FadeInText(zoomText));
+        yield return StartCoroutine(gameCompleteSeq());
+
+        // yield return StartCoroutine(uiManager.FadeOutImage(doubleTapThis, 1f));
+
+        // yield return StartCoroutine(uiManager.FadeInText(zoomText));
+        // yield return new WaitForSeconds(0.5f);
+        // yield return StartCoroutine(uiManager.FadeInImage(zoomButton1, 1f));
+        // yield return StartCoroutine(uiManager.FadeInImage(zoomButton2, 1f));
+
+        // SimpleDrag zoomThis = zoomButton1.GetComponent<SimpleDrag>();
+        // if (zoomThis != null)
+        // {
+        //     zoomThis.OnResult.AddListener((success) =>
+        //     {
+        //         if (success)
+        //         {
+        //             OnZoomComplete();
+        //         }
+        //     });
+        // }
+    }
+
+    IEnumerator gameCompleteSeq()
+    {
         yield return new WaitForSeconds(0.5f);
-        yield return StartCoroutine(uiManager.FadeInImage(zoomButton1, 1f));
-        yield return StartCoroutine(uiManager.FadeInImage(zoomButton2, 1f));
-
-        SimpleDrag zoomThis = zoomButton1.GetComponent<SimpleDrag>();
-        if (zoomThis != null)
+        if (gameCompletePanel != null)
         {
-            zoomThis.OnResult.AddListener((success) =>
-            {
-                if (success)
-                {
-                    OnZoomComplete();
-                }
-            });
+        gameCompletePanel.ShowCompletePanel();
         }
+
     }
 
     // level 7: Zoom Text -> level 8
